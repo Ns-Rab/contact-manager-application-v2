@@ -13,7 +13,7 @@ function App() {
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/signup" element={ <SignUp/> } />
-
+git 
       <Route path="*" element={<NotFound />} />
 
     

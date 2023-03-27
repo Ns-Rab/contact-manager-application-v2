@@ -1,0 +1,12 @@
+@media only screen and (min-width: 768px){
+    .main-footer-wrapper{
+        padding: 2rem;
+        color: #4f4f4f;
+        display: grid;
+        place-items: center;
+        gap: 1rem
+   
+    }
+}
+
+    
