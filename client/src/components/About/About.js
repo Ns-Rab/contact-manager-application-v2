@@ -10,7 +10,7 @@ const About = () => {
         {/* start of about page */}
         <div class="about">
             <h3>About SMA blog - Nigeria News</h3>
-            <p>SMA is Nigeria’s no. 1 online and entertainment news publisher by audience, 
+            <p> CMA is Nigeria’s no. 1 online and entertainment news publisher by audience, 
                 meeting the news needs of over 10 million unique readers monthly via our website. 
                 We publish various news and editorial content, including entertainment, business, politics, 
                 current affairs, and human interest stories. Our team of experienced journalists brings our 

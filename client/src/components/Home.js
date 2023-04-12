@@ -3,11 +3,19 @@ import "./Home.css";
 import Footer from './Partials/Footer/Footer';
 import Header from './Partials/Header/Header';
 
+
 const Home = () => {
   return (
     <div>
       <Header/>
-      <h1>Home page</h1>
+      {/* start of homepage */}
+        <div>
+            <div><img></img></div>
+
+        </div>
+
+
+      {/* end of homepage */}
       <Footer/>
     </div>
   )

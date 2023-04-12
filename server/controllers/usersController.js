@@ -8,12 +8,23 @@ const registerUser = async (req, res) => {
     
     try {
         // check is email already exists
-        const founder = await UserModel.find({email:email})
+        const foundUser = await UserModel.find({email:email})
+        // console.log(foundUser);
 
-        // if user found
-        if (foundUser) {
-            res.status(400).json({message: "User already register"})
+        // if user is found
+        if (!foundUser) {
+            res.status(400).json({message: "User already register"});
+            return;
         }
+
+
+        // creat a salt
+        const salt = 10;
+
+
+        // hash password
+        const hashedPassword = await bcrypt.hash(password, salt);
+
 
         // if not found, create a new user
         const newUser = await UserModel.create({
@@ -21,25 +32,63 @@ const registerUser = async (req, res) => {
             last_name: last_name,
             phone: phone,
             email: email,
-            password: "",
+            password: hashedPassword,
 
         });
 
+        // if user was not created successfully
+        if (!newUser) {
+            res.status(400).json({ message: "Unble to create user"});
+            
+        }
+
+        // response to front-end
+        res
+        .status(201).json({
+            message: "User created successfully!", data: newUser});
+
+    
+
     } catch (error) {
-        res.status(500);
+        res.status(500).json({message: error.message});
         throw new Error(`Internal server error: ${error}`)
     }
     
     
-    res.json({message: "User created!",
-    data: req.body});
+    
 };
 
 // @define: login user
 // @define: api/users/login
 // @privacy: public
 const loginUser = async (req, res) => {
-    res.json({message: "User loggedIn!"});
+    // destructure email and password from req body
+    const { email, password } = req.body;
+
+    try {
+    // check if email exists
+    const foundEmail = await UserModel.find({email: email});
+    
+    const checkPassword = await bcrypt.compare(password, foundEmail.password);
+    console.log(checkPassword);
+
+    //check if passwords match
+
+    // if (foundEmail && !(await bcrypt.compare(password, foundEmail.password))){
+
+    //     res.status(400).json({message: "Invalid credentials"})
+    // }
+
+
+    // if login details are correct
+    res.json({
+        message: "User loggedIn", 
+        data: foundEmail
+    });
+    
+    } catch (error) {
+        res.status(500).json({message:error.message}); 
+    }
 };
 
 // @define: all users
