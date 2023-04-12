@@ -1,3 +1,4 @@
+
 const UserModel = require('../models/userModel');
 const bcrypt = require("bcrypt");
 // @define: register user
@@ -8,18 +9,18 @@ const registerUser = async (req, res) => {
     
     try {
         // check is email already exists
-        const foundUser = await UserModel.find({email:email})
+        const foundUser = await UserModel.findOne({email});
         // console.log(foundUser);
 
         // if user is found
-        if (!foundUser) {
-            res.status(400).json({message: "User already register"});
+        if (foundUser) {
+            res.status(400).send({message: "User already register"});
             return;
         }
 
 
         // creat a salt
-        const salt = 10;
+        const salt = await bcrypt.genSalt(10);
 
 
         // hash password
@@ -39,8 +40,13 @@ const registerUser = async (req, res) => {
         // if user was not created successfully
         if (!newUser) {
             res.status(400).json({ message: "Unble to create user"});
+            return;
             
         }
+
+        // Send confirmation email to user
+
+
 
         // response to front-end
         res
@@ -67,17 +73,15 @@ const loginUser = async (req, res) => {
 
     try {
     // check if email exists
-    const foundEmail = await UserModel.find({email: email});
+    const foundEmail = await UserModel.findOne({email});
     
-    const checkPassword = await bcrypt.compare(password, foundEmail.password);
-    console.log(checkPassword);
-
     //check if passwords match
 
-    // if (foundEmail && !(await bcrypt.compare(password, foundEmail.password))){
+    if (!foundEmail || !(await bcrypt.compare(password, foundEmail.password))){
 
-    //     res.status(400).json({message: "Invalid credentials"})
-    // }
+        res.status(400).json({message: "Invalid credentials"})
+        return;
+    }
 
 
     // if login details are correct
@@ -88,6 +92,7 @@ const loginUser = async (req, res) => {
     
     } catch (error) {
         res.status(500).json({message:error.message}); 
+        return;
     }
 };
 
@@ -95,26 +100,104 @@ const loginUser = async (req, res) => {
 // @define: api/users
 // @privacy: protected
 const getAllUsers = async (req, res) => {
-    res.json({message: "get All users!"});
+    try {
+        //fetch all users from db
+        const allUsers = await UserModel.find();
+        //send data to frontend
+        res.send(allUsers);
+    } catch (error) {
+        res.status(500).json({message:error.message}); 
+        return;
+    }
 };
 
 // @define: get single user
 // @define: api/users/:id
 // @privacy: protected
 const getSingleUser = async (req, res) => {
-    res.json({message: "get single user!"});
+    //get id from params||destructure
+    const {id} = req.params;
+    try {
+        // fetch single user from database
+        const singleUser = await UserModel.findById(id);
+        
+        //return single user to frontend
+        res.send(singleUser);
+        
+    } catch (error) {
+        res.status(500).json({message:error.message}); 
+        return;
+    }
+
 };
 
 
 const updateSingleUser = async (req, res) => {
-    res.json({message: "update single user!"});
+    //get id from params||destructure
+    const {id} = req.params;
+    const {first_name, last_name, phone} = req.body;
+
+    try {
+    // check if user exist
+        const userExists = await UserModel.findById(id);
+    
+    //if user doesn't exist
+    if (!userExists) {
+        res.status(404).send("User not found");
+        return;
+    }
+
+        // console.log(`the value is : ${req.body?.first_name}`);
+    //update user details here
+    const updatedUser = await UserModel.findByIdAndUpdate(id, {
+        first_name:req.body?.first_name,
+        last_name: req.body?.last_name,
+        phone:req.body?.phone
+    }, { new: true });
+    
+    //return updated user to frontend
+        res.send(updatedUser);
+        
+    } catch (error) {
+        res.status(500).json({message:error.message}); 
+        return;
+    }
 };
 
 // @define: delete single user
 // @define: api/users/:id
 // @privacy: protected
 const deleteSingleUser = async (req, res) => {
-    res.json({message: "delete single user!"});
+    //get id from params||destructure
+    const {id} = req.params;
+    const {first_name, last_name, phone} = req.body;
+
+    try {
+    // check if user exist
+        const userExists = await UserModel.findById(id);
+    
+    //if user doesn't exist
+    if (!userExists) {
+        res.status(404).send("User not found");
+        return;
+    }
+
+    
+    //delet user here
+    const deletedUser = await UserModel.findByIdAndDelete(id);
+
+    
+    //return deleted user to frontend
+        res.send(deletedUser);
+        
+    } catch (error) {
+        res.status(500).json({message:error.message}); 
+        return;
+    }
 };
+
+
+
+
 
 module.exports = {registerUser, loginUser, getAllUsers, getSingleUser, updateSingleUser,deleteSingleUser};
