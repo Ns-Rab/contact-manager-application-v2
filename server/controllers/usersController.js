@@ -1,6 +1,7 @@
 
 const UserModel = require('../models/userModel');
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 // @define: register user
 // @define: api/users/register
 // @privacy: public
@@ -9,7 +10,7 @@ const registerUser = async (req, res) => {
     
     try {
         // check is email already exists
-        const foundUser = await UserModel.findOne({email});
+        const foundUser = await UserModel.findOne({email: email.toLowerCase()});
         // console.log(foundUser);
 
         // if user is found
@@ -32,7 +33,7 @@ const registerUser = async (req, res) => {
             first_name:first_name,
             last_name: last_name,
             phone: phone,
-            email: email,
+            email: email.toLowerCase(),
             password: hashedPassword,
 
         });
@@ -72,8 +73,15 @@ const loginUser = async (req, res) => {
     const { email, password } = req.body;
 
     try {
+    // check if email or password empty
+    if (!email || !password) {
+        res.status(400).send({message: "All fields are required"});
+        return;
+    }
+
+
     // check if email exists
-    const foundEmail = await UserModel.findOne({email});
+    const foundEmail = await UserModel.findOne({email: email.toLowerCase()});
     
     //check if passwords match
 
@@ -85,9 +93,20 @@ const loginUser = async (req, res) => {
 
 
     // if login details are correct
-    res.json({
-        message: "User loggedIn", 
-        data: foundEmail
+
+    // create a token
+    const token = jwt.sign({user:foundEmail._id}, "process.env.LOGIN_SECRET", {expiresIn: "1d"});
+
+    
+    req.session.save((err) => {
+        if (err) {
+            res.status(500).send({message: err.message});
+            return;
+        } else {
+            //sending token back to front-end
+            res.status(200).send({token: token});
+        }
+
     });
     
     } catch (error) {
