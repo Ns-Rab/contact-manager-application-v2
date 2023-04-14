@@ -4,6 +4,8 @@ const usersRoute = express.Router();
 //importing usersController
 const {registerUser, loginUser, getAllUsers, getSingleUser, updateSingleUser, deleteSingleUser} = require("../controllers/usersController");
 
+const isAuth = require("../middlewares/isAuth");
+
 // @define: register user
 // @define: api/users/register
 // @privacy: public
@@ -19,23 +21,23 @@ usersRoute.post('/login', loginUser);
 // @define: all users
 // @define: api/users
 // @privacy: protected
-usersRoute.get('/', getAllUsers );
+usersRoute.get('/', isAuth, getAllUsers );
 
 
-// @define: get single user
+// @define: get single user profile
 // @define: api/users/:id
 // @privacy: protected
-usersRoute.get('/:id', getSingleUser);
+usersRoute.get('/:id',isAuth, getSingleUser);
 
 // @define: update single user
 // @define: api/users/:id
 // @privacy: protected
-usersRoute.put('/:id', updateSingleUser);
+usersRoute.put('/:id', isAuth, updateSingleUser);
 
 // @define: delete single user
 // @define: api/users/:id
 // @privacy: protected
-usersRoute.delete('/:id', deleteSingleUser);
+usersRoute.delete('/:id', isAuth, deleteSingleUser);
 
 
 // usersRoute.delete('/:id', (req, res) => {
