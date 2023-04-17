@@ -30,4 +30,4 @@ var ContactsSchema = new mongoose.Schema({
 });
 
 //Export the model
-module.exports = mongoose.model('Contaact', ContactsSchema);
+module.exports = mongoose.model('Contact', ContactsSchema);
