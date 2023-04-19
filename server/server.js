@@ -5,13 +5,15 @@ const contactsRoute = require("./routes/contactsRoute");
 const productsRoute = require("./routes/produtsRoute");
 const db_connection = require("./config/dbConnect");
 const session = require("express-session");
-const MongoDBStore = require("connect-mongodb-session")(session)
+const MongoDBStore = require("connect-mongodb-session")(session);
+const cors = require("cors");
 const app = express();
 db_connection();
 
 const PORT = process.env.PORT || 5000;
 
 //middleware
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 

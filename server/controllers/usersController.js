@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken");
 // @define: api/users/register
 // @privacy: public
 const registerUser = async (req, res) => {
-    const {first_name, last_name, phone, email, password} = req.body;
+    const {first_name, last_name, email, password} = req.body;
     
     try {
         // check is email already exists
@@ -32,7 +32,6 @@ const registerUser = async (req, res) => {
         const newUser = await UserModel.create({
             first_name:first_name,
             last_name: last_name,
-            phone: phone,
             email: email.toLowerCase(),
             password: hashedPassword,
 
@@ -52,7 +51,8 @@ const registerUser = async (req, res) => {
         // response to front-end
         res
         .status(201).json({
-            message: "User created successfully!", data: newUser});
+            message: "User created successfully!", data: newUser
+        });
 
     
 
@@ -75,7 +75,7 @@ const loginUser = async (req, res) => {
     try {
     // check if email or password empty
     if (!email || !password) {
-        res.status(400).send({message: "All fields are required"});
+        res.status(400).json({message: "All fields are required"});
         return;
     }
 
@@ -100,11 +100,11 @@ const loginUser = async (req, res) => {
     
     req.session.save((err) => {
         if (err) {
-            res.status(500).send({message: err.message});
+            res.status(500).json({message: err.message});
             return;
         } else {
             //sending token back to front-end
-            res.status(200).send({token: token});
+            res.status(200).json({token: token});
         }
 
     });

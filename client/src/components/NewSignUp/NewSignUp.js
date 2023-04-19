@@ -1,11 +1,11 @@
 import React, {useState} from 'react';
-import "./Signup.css";
+import "./NewSignUp.css";
 import Header from "../Partials/Header/Header";
 import Footer from "../Partials/Footer/Footer";
 import { Link } from 'react-router-dom';
 import axios from "axios";
 
-const SignUp = () => {
+const NewSignUp = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -18,50 +18,40 @@ const SignUp = () => {
 
   
 
-  // send details to backend
-  const handleSignup = async (event) => {
+  
+  const handleNewSignUp = async (event) => {
     event.preventDefault();
     console.log("signing up...");
 
     //check for empty
-    if (!firstName || !lastName || !email || !password || !confirmPassword) {
-      // display error message
+    if ((!firstName || !lastName || !email || !password || !confirmPassword)) {
+      // dispaly error message
       setError("All fields are required!")
-    }
 
       //check password match
       if (password !== confirmPassword) {
       // display error message
-      setError("passwords doesn't match!");
+      setError("passwords doen't match!");
       }
-    
-
-
-      const userDetails = {
-        first_name: firstName,
-        last_name: lastName,
-        email: email,
-        password: password,
-      };
 
       //send  details to backend
 
       try {
-        const Backend_URL = "http://localhost:5000/api/users/register";
-
-        const response = await axios.post(Backend_URL, userDetails);
-        console.log(response);  
-
+        const Backend_URL = "http://localhost:500/api/users";
+        const response = await axios.post("Backend_URL, userDetails")
       } catch (error) {
-        setError(error.message);
+        setError.message(error.message);
       }
+
+    }
+
   };
 
   
 
 
   return (
-    <React.Fragment>
+    <div>
       <Header/>
       {/* start of signup wrapper */}
       <div className="signup-wrapper">
@@ -78,13 +68,11 @@ const SignUp = () => {
               <input 
                 type="text" 
                 placeholder='First name'
-                name='firstname'
                 onChange={(event)=> setFirstName(event.target.value)}
               />
               <input 
                 type="text" 
                 placeholder='Last name' 
-                name='lastname'
                 onChange={(event)=> setLastName(event.target.value)}
               />
             </div>
@@ -93,7 +81,6 @@ const SignUp = () => {
               <input 
                 type="email" 
                 placeholder='example@mail.com'
-                name='email'
                 onChange={(event)=> setEmail(event.target.value)}
               />
             </div>
@@ -102,10 +89,9 @@ const SignUp = () => {
               <input 
                 type="password" 
                 placeholder='password' 
-                name='password'
                 onChange={(event)=> setPassword(event.target.value)}
               />
-              <input type="password" placeholder='confirm password' name='password' onChange={(event)=> setConfirmPassword(event.target.value)}/>
+              <input type="password" placeholder='confirm password' onChange={(event)=> setConfirmPassword(event.target.value)}/>
             </div>
             <div className='signup-form-row'>
               <label htmlFor="termsConditions">
@@ -118,7 +104,7 @@ const SignUp = () => {
             
 
             <div className='signup-form-row'>
-              <button type="submit">Create Account</button>
+              <button>Create Account</button>
             </div>
 
             <div className='signup-form-row'>
@@ -137,8 +123,8 @@ const SignUp = () => {
       {/* end of signup wrapper */}
       
       <Footer/>
-    </React.Fragment>
+    </div>
   );
 };
 
-export default SignUp;
+export default NewSignUp
